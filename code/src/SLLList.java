@@ -1,9 +1,10 @@
-public class SLLList {
+public class SLLList<Pineapple> {
+
     public class IntNode {
-        public int item;
+        public Pineapple item;
         public IntNode next;
 
-        public IntNode(int f, IntNode node){
+        public IntNode(Pineapple f, IntNode node){
             item =f;
             next = node;
         }
@@ -13,27 +14,27 @@ public class SLLList {
     private IntNode sentinel;
     private int size;
 
-    public SLLList(int x){
-        sentinel = new IntNode(0,null);
+    public SLLList(Pineapple x){
+        sentinel = new IntNode(null,null);
         sentinel.next= new IntNode(x,null);
         size = 1;
     }
 
     public SLLList(){
-        sentinel = new IntNode(0,null);
+        sentinel = new IntNode(null,null);
         size = 0;
     }
 
-    public void addFirst(int x){
+    public void addFirst(Pineapple x){
         sentinel.next = new IntNode(x,sentinel.next);
         size+=1;
     }
 
-    public int getFirst(){
+    public Pineapple getFirst(){
         return sentinel.next.item;
     }
 
-    public void addLast(int x){
+    public void addLast(Pineapple x){
         IntNode p = sentinel;
         size+=1;
 
@@ -55,10 +56,10 @@ public class SLLList {
         }
     }
     public static void main(String[] args){
-        SLLList L = new SLLList(5);
-        L.addFirst(10);
-        L.addFirst(15);
-        L.addLast(15);
-        System.out.println(L.size());
+        SLLList<String> L = new SLLList<String>("What");
+        L.addFirst("do");
+        L.addFirst("dog");
+        L.addLast("doing");
+        System.out.println(L.getFirst());
     }
 }
