@@ -1,7 +1,3 @@
-package lec2_intro2;
-
-import java.util.concurrent.DelayQueue;
-
 public class Dog {
 
     public int weightInPounds;

@@ -1,5 +1,3 @@
-package lec2_intro2;
-
 public class Doglauncher {
     public static void main(String[] args){
         Dog chester = new Dog(17);
