@@ -5,6 +5,7 @@ import game2048rendering.Side;
 import game2048rendering.Tile;
 
 import java.util.Formatter;
+import java.util.concurrent.TransferQueue;
 
 
 /** The state of a game of 2048.
@@ -123,7 +124,44 @@ public class Model {
      */
     public boolean atLeastOneMoveExists() {
         // TODO: Fill in this function.
-        return false;
+        int[] dx = {-1,0,1,0};
+        int[] dy = {0,1,0,-1};
+        if(emptySpaceExists()){
+            return true;
+        }
+        if(maxTileExists()){
+            return true;
+        }
+
+        for(int x= 0;x<=3;x++){
+            for(int y=0;y<=3;y++){
+                //分别向四个方向搜索
+                int tx=x,ty=y;
+                int value_of_xy = board.tile(x,y).value();
+                for(int dir=0;dir<4;dir++){
+                    //0向左，1向上,2向右,3向下
+
+                    while(tx>=0 && tx<=3 && ty>=0 &&ty<=3){
+                        tx = tx +dx[dir];
+                        ty = ty+ dy[dir];
+                        int value_of_txty;
+                        if(tx>=0&&tx<=3&&ty>=0&&ty<=3){
+                            if(board.tile(tx,ty)==null) continue;
+
+                            value_of_txty = board.tile(tx,ty).value();
+                            if(value_of_txty != value_of_xy){
+                                break;
+                            }else{
+                                return true;
+                            }
+                        }
+                    }
+                    tx = x;
+                    ty = y;
+                }
+            }
+        }
+      return false;
     }
 
     /**
