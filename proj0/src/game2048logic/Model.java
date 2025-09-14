@@ -102,6 +102,16 @@ public class Model {
      */
     public boolean maxTileExists() {
         // TODO: Task 3. Fill in this function.
+        for(int x = 0;x<=3;x++){
+            for(int y=0;y<=3;y++){
+                if(board.tile(x,y)!=null){
+                    int value = board.tile(x,y).value();
+                    if(value==MAX_PIECE){
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
