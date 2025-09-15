@@ -86,8 +86,8 @@ public class Model {
      * */
     public boolean emptySpaceExists() {
         // TODO: Task 2. Fill in this function.
-        for(int x = 0;x<=3;x++){
-            for(int y=0;y<=3;y++){
+        for(int x = 0;x<board.size();x++){
+            for(int y=0;y<board.size();y++){
                 if(board.tile(x,y)==null){
                     return true;
                 }
@@ -103,8 +103,8 @@ public class Model {
      */
     public boolean maxTileExists() {
         // TODO: Task 3. Fill in this function.
-        for(int x = 0;x<=3;x++){
-            for(int y=0;y<=3;y++){
+        for(int x = 0;x<board.size();x++){
+            for(int y=0;y<board.size();y++){
                 if(board.tile(x,y)!=null){
                     int value = board.tile(x,y).value();
                     if(value==MAX_PIECE){
@@ -133,19 +133,19 @@ public class Model {
             return true;
         }
 
-        for(int x= 0;x<=3;x++){
-            for(int y=0;y<=3;y++){
+        for(int x= 0;x<board.size();x++){
+            for(int y=0;y<board.size();y++){
                 //分别向四个方向搜索
                 int tx=x,ty=y;
                 int value_of_xy = board.tile(x,y).value();
                 for(int dir=0;dir<4;dir++){
                     //0向左，1向上,2向右,3向下
 
-                    while(tx>=0 && tx<=3 && ty>=0 &&ty<=3){
+                    while(tx>=0 && tx<board.size() && ty>=0 &&ty<board.size()){
                         tx = tx +dx[dir];
                         ty = ty+ dy[dir];
                         int value_of_txty;
-                        if(tx>=0&&tx<=3&&ty>=0&&ty<=3){
+                        if(tx>=0&&tx< board.size()&&ty>=0&&ty<board.size()){
                             if(board.tile(tx,ty)==null) continue;
 
                             value_of_txty = board.tile(tx,ty).value();
@@ -184,6 +184,24 @@ public class Model {
         int targetY = y;
 
         // TODO: Tasks 5, 6, and 10. Fill in this function.
+        while(targetY<board.size()-1){
+            if(board.tile(x,targetY+1)==null){
+                targetY+=1;
+            }else if(board.tile(x,targetY+1).value()==myValue && !board.tile(x,targetY+1).wasMerged()){
+                targetY+=1;
+                score+=myValue*2;
+                break;
+            }
+            else{
+                break;
+            }
+        }
+        //最重要的，当不能向上移动时,不执行move代码，否则会使得原本的value*2;
+        if(targetY ==y) return;
+        else{
+            board.move(x,targetY,currTile);
+        }
+
     }
 
     /** Handles the movements of the tilt in column x of the board
@@ -193,10 +211,21 @@ public class Model {
      * */
     public void tiltColumn(int x) {
         // TODO: Task 7. Fill in this function.
+        for(int y=board.size()-1;y>=0;y--){
+            if(board.tile(x,y)!=null){
+                moveTileUpAsFarAsPossible(x,y);
+            }
+        }
     }
 
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
+        board.setViewingPerspective(side);
+        for(int i=0;i<board.size();i++){
+            tiltColumn(i);
+        }
+
+        board.setViewingPerspective(Side.NORTH);
     }
 
     /** Tilts every column of the board toward SIDE.
