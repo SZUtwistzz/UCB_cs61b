@@ -1,6 +1,8 @@
 package ngrams;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -31,6 +33,14 @@ public class TimeSeries extends TreeMap<Integer, Double> {
     public TimeSeries(TimeSeries ts, int startYear, int endYear) {
         super();
         // TODO: Fill in this constructor.
+        for(Map.Entry<Integer,Double> x:ts.entrySet()){
+            int year = x.getKey();
+            double value = x.getValue();
+
+            if(year>=MIN_YEAR && year<=MAX_YEAR){
+                this.put(year,value);
+            }
+        }
     }
 
     /**
@@ -38,7 +48,14 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public List<Integer> years() {
         // TODO: Fill in this method.
-        return null;
+        List<Integer> toReturn = new ArrayList<>();
+        int Counter = 0;
+        for(Map.Entry<Integer,Double> x:this.entrySet()){
+            int year = x.getKey();
+            toReturn.add(year);
+        }
+
+        return toReturn;
     }
 
     /**
@@ -47,7 +64,13 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public List<Double> data() {
         // TODO: Fill in this method.
-        return null;
+        List<Double> toReturn = new ArrayList<>();
+        for(Map.Entry<Integer,Double> x:this.entrySet()){
+            double value = x.getValue();
+            toReturn.add(value);
+        }
+
+        return toReturn;
     }
 
     /**
@@ -61,7 +84,31 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries plus(TimeSeries ts) {
         // TODO: Fill in this method.
-        return null;
+        if(this.size()==0 && ts.size()==0){
+            return new TimeSeries();
+        }
+
+        TimeSeries newItem = new TimeSeries();
+
+        for(Map.Entry<Integer,Double> x:this.entrySet()){
+            int year = x.getKey();
+            double new_value = x.getValue();
+            if(ts.containsKey(year)){
+                new_value+=ts.get(year);
+            }
+
+            newItem.put(year,new_value);
+        }
+
+        for(Map.Entry<Integer,Double> x:ts.entrySet()){
+            int year = x.getKey();
+            double new_value = x.getValue();
+            if(!this.containsKey(year)){
+                newItem.put(year,new_value);
+            }
+        }
+
+        return newItem;
     }
 
     /**
@@ -75,7 +122,21 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries dividedBy(TimeSeries ts) {
         // TODO: Fill in this method.
-        return null;
+        if(this.size() == 0 && ts.size()==0){
+            return new TimeSeries();
+        }
+
+        TimeSeries newTs = new TimeSeries();
+
+        for(Map.Entry<Integer,Double> x:this.entrySet()){
+            int x_year = x.getKey();
+            double x_value = x.getValue();
+            if(ts.containsKey(x_year)) {
+                double result = x_value / ts.get(x_year);
+                newTs.put(x_year,result);
+            }
+        }
+        return newTs;
     }
 
     // TODO: Add any private helper methods.

@@ -1,3 +1,4 @@
+import com.google.common.eventbus.AllowConcurrentEvents;
 import ngrams.TimeSeries;
 
 import org.junit.jupiter.api.Test;
@@ -54,5 +55,32 @@ public class TimeSeriesTest {
 
         assertThat(totalPopulation.years()).isEmpty();
         assertThat(totalPopulation.data()).isEmpty();
+    }
+
+    @Test
+    public void testYearandData(){
+        TimeSeries catPopulation = new TimeSeries();
+        catPopulation.put(1991, 0.0);
+        catPopulation.put(1992, 100.0);
+        catPopulation.put(1994, 200.0);
+
+        System.out.println(catPopulation.years());
+        System.out.println(catPopulation.data());
+    }
+
+    @Test
+    public void testDivide(){
+        TimeSeries catPopulation = new TimeSeries();
+        catPopulation.put(1991, 0.0);
+        catPopulation.put(1992, 100.0);
+        catPopulation.put(1994, 200.0);
+
+        TimeSeries dogPopulation = new TimeSeries();
+        dogPopulation.put(1991, 0.0);
+        dogPopulation.put(1992, 100.0);
+        dogPopulation.put(1994, 150.0);
+
+        System.out.println(catPopulation.dividedBy(dogPopulation));
+
     }
 } 

@@ -1,6 +1,11 @@
 package ngrams;
 
+import edu.princeton.cs.algs4.In;
+
+import java.awt.geom.QuadCurve2D;
 import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static ngrams.TimeSeries.MAX_YEAR;
 import static ngrams.TimeSeries.MIN_YEAR;
@@ -18,12 +23,38 @@ import static ngrams.TimeSeries.MIN_YEAR;
 public class NGramMap {
 
     // TODO: Add any necessary static/instance variables.
-
+    TreeMap<String,TimeSeries> root = new TreeMap<>();
+    TimeSeries totalCountes = new TimeSeries();
     /**
      * Constructs an NGramMap from WORDSFILENAME and COUNTSFILENAME.
      */
     public NGramMap(String wordsFilename, String countsFilename) {
         // TODO: Fill in this constructor. See the "NGramMap Tips" section of the spec for help.
+        In wordfile = new In(wordsFilename);
+        In countsfile = new In(countsFilename);
+
+        while(wordfile.hasNextLine()){
+            String nextline = wordfile.readLine();
+            String[] splitLine = nextline.split("\t");
+            String word = splitLine[0];
+            int year = Integer.parseInt(splitLine[1]);
+            Double count = Double.valueOf(splitLine[2]);
+            if(!root.containsKey(word)){
+                TimeSeries ts = new TimeSeries();
+                ts.put(year,count);
+                root.put(word,ts);
+            }else{
+                root.get(word).put(year,count);
+            }
+        }
+
+        while(countsfile.hasNextLine()){
+            String nextline = countsfile.readLine();
+            String[] splitLine = nextline.split(",");
+            int year = Integer.parseInt(splitLine[0]);
+            Double count = Double.valueOf(splitLine[1]);
+            totalCountes.put(year,count);
+        }
     }
 
     /**
@@ -35,7 +66,17 @@ public class NGramMap {
      */
     public TimeSeries countHistory(String word, int startYear, int endYear) {
         // TODO: Fill in this method.
-        return null;
+        if(root.get(word)==null){
+            return new TimeSeries();
+        }
+        TimeSeries toReturn = new TimeSeries();
+        for(Map.Entry<Integer, Double> x:root.get(word).entrySet()){
+            int year = x.getKey();
+            if(year>=startYear && year<=endYear){
+                toReturn.put(x.getKey(),x.getValue());
+            }
+        }
+        return toReturn;
     }
 
     /**
@@ -46,7 +87,15 @@ public class NGramMap {
      */
     public TimeSeries countHistory(String word) {
         // TODO: Fill in this method.
-        return null;
+        if(root.get(word)==null){
+            return new TimeSeries();
+        }
+        TimeSeries toReturn = new TimeSeries();
+        for(Map.Entry<Integer, Double> x:root.get(word).entrySet()){
+            int year = x.getKey();
+            toReturn.put(x.getKey(),x.getValue());
+        }
+        return toReturn;
     }
 
     /**
@@ -54,7 +103,11 @@ public class NGramMap {
      */
     public TimeSeries totalCountHistory() {
         // TODO: Fill in this method.
-        return null;
+        TimeSeries toReturn = new TimeSeries();
+        for(Map.Entry<Integer,Double> x:totalCountes.entrySet()){
+            toReturn.put(x.getKey(),x.getValue());
+        }
+        return toReturn;
     }
 
     /**
@@ -64,7 +117,19 @@ public class NGramMap {
      */
     public TimeSeries weightHistory(String word, int startYear, int endYear) {
         // TODO: Fill in this method.
-        return null;
+        if(root.get(word)==null) return new TimeSeries();
+
+        TimeSeries toReturn = new TimeSeries();
+        for(Map.Entry<Integer,Double> x:root.get(word).entrySet()){
+            int year = x.getKey();
+            if(year>=startYear && year<=endYear) {
+                double count = x.getValue();
+                double totalCount = totalCountes.get(year);
+                double weight = count / totalCount;
+                toReturn.put(year, weight);
+            }
+        }
+        return toReturn;
     }
 
     /**
@@ -74,7 +139,17 @@ public class NGramMap {
      */
     public TimeSeries weightHistory(String word) {
         // TODO: Fill in this method.
-        return null;
+        if(root.get(word)==null) return new TimeSeries();
+
+        TimeSeries toReturn = new TimeSeries();
+        for(Map.Entry<Integer,Double> x:root.get(word).entrySet()){
+            int year = x.getKey();
+            double count = x.getValue();
+            double totalCount = totalCountes.get(year);
+            double weight = count / totalCount;
+            toReturn.put(year, weight);
+        }
+        return toReturn;
     }
 
     /**
@@ -82,10 +157,17 @@ public class NGramMap {
      * ENDYEAR, inclusive of both ends. If a word does not exist in this time frame, ignore it
      * rather than throwing an exception.
      */
-    public TimeSeries summedWeightHistory(Collection<String> words,
-                                          int startYear, int endYear) {
+    public TimeSeries summedWeightHistory(Collection<String> words, int startYear, int endYear) {
         // TODO: Fill in this method.
-        return null;
+
+        TimeSeries toReturn = new TimeSeries();
+
+
+        for(String word:words){
+            TimeSeries wordWeight = weightHistory(word,startYear,endYear);
+            toReturn = toReturn.plus(wordWeight);
+        }
+        return toReturn;
     }
 
     /**
@@ -94,7 +176,13 @@ public class NGramMap {
      */
     public TimeSeries summedWeightHistory(Collection<String> words) {
         // TODO: Fill in this method.
-        return null;
+
+        TimeSeries toReturn = new TimeSeries();
+        for(String word:words){
+            TimeSeries wordWeight = weightHistory(word);
+            toReturn = toReturn.plus(wordWeight);
+        }
+        return toReturn;
     }
 
     // TODO: Add any private helper methods.
