@@ -1,10 +1,13 @@
 import browser.NgordnetQuery;
 import browser.NgordnetQueryHandler;
 import browser.NgordnetQueryType;
+import main.WordNetReader;
 import org.junit.jupiter.api.Test;
 import main.AutograderBuddy;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -29,4 +32,39 @@ public class TestOneWordK0Hyponyms {
     }
 
     // TODO: Add more unit tests (including edge case tests) here.
+    @Test
+    public void testWordNetReaderMapping() {
+        WordNetReader wnr = new WordNetReader(SMALL_HYPONYM_FILE, SMALL_SYNSET_FILE);
+
+        // 测试一词多义：确保 "change" 对应了多个 ID
+        // 假设在 synsets16.txt 中，change 出现在两个不同的行
+        Set<String> hyponyms = wnr.getCommonHyponyms(Collections.singletonList("change"));
+        assertThat(hyponyms).contains("variation"); // 语义1的下位词
+        assertThat(hyponyms).contains("modification"); // 语义2的下位词（如果有的话）
+    }
+
+    @Test
+    public void testMultiWordIntersection() {
+        WordNetReader wnr = new WordNetReader(SMALL_HYPONYM_FILE, SMALL_SYNSET_FILE);
+
+        // 查询 "occurrence" 和 "change" 的共同下位词
+        List<String> words = List.of("occurrence", "change");
+        Set<String> result = wnr.getCommonHyponyms(words);
+
+        // 预期结果应该是两个集合的交集
+        assertThat(result).containsExactly("alteration", "change", "variation").inOrder();
+        // 确保不包含只属于其中一个词的下位词
+        assertThat(result).doesNotContain("action");
+    }
+
+    @Test
+    public void testEmptyIntersection() {
+        WordNetReader wnr = new WordNetReader(SMALL_HYPONYM_FILE, SMALL_SYNSET_FILE);
+
+        // 两个风马牛不相及的词
+        List<String> words = List.of("apple", "computer");
+        Set<String> result = wnr.getCommonHyponyms(words);
+
+        assertThat(result).isEqualTo("");
+    }
 }
