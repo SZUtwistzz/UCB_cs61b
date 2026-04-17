@@ -164,6 +164,7 @@ public class Tetris {
                     board[j][i] = Tileset.NOTHING;
                 }
                 DropDownBoard(i);
+                i--;
             }
         }
 
