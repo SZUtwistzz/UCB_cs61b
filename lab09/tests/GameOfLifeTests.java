@@ -180,6 +180,7 @@ public class GameOfLifeTests {
                 {Tileset.NOTHING, Tileset.NOTHING, Tileset.NOTHING},
                 {Tileset.NOTHING, Tileset.NOTHING, Tileset.NOTHING}
         };
+
         TETile[][] loadResult = student.loadBoard(LOAD_TEST);
         checkState(loadResult, result);
     }
@@ -226,4 +227,27 @@ public class GameOfLifeTests {
         List<String> contents = br.lines().toList();
         return String.join(delimiter, contents).hashCode();
     }
+
+//    @Test
+//    public void mySave() throws IOException {
+//        checkIfPatternFilesAreModified();
+//        /**
+//         * Should expect the board to be saved like in the following (not including dimensions):
+//         * 010
+//         * 011
+//         * 100
+//         * 010
+//         */
+//        TETile[][] result = new TETile[][] {
+//                {Tileset.NOTHING, Tileset.CELL, Tileset.NOTHING},
+//                {Tileset.CELL, Tileset.CELL, Tileset.CELL},
+//                {Tileset.NOTHING, Tileset.CELL, Tileset.NOTHING},
+//                {Tileset.NOTHING, Tileset.CELL, Tileset.NOTHING}
+//        };
+//
+//        GameOfLife student = new GameOfLife(result, true);
+//        student.saveBoard();
+//
+//
+//    }
 }

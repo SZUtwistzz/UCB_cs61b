@@ -241,11 +241,53 @@ public class GameOfLife {
         // TODO: The current state is represented by TETiles[][] tiles and the next
         // TODO: state/evolution should be returned in TETile[][] nextGen.
 
-
-
+        for(int i=0;i<height;i++){
+            for(int j=0;j<width;j++){
+                nextGen[j][i] = NextGenerationHelper(tiles,j,i);
+            }
+        }
 
         // TODO: Returns the next evolution in TETile[][] nextGen.
-        return null;
+        return nextGen;
+    }
+
+    /**helper method
+     evaluate the state of a tile
+     1.任何存活的单元格，如果存活的邻居少于两个，就会死亡，如同因资源不足而死亡。
+     2.任何存活的单元格，如果有两个或三个邻居，就会存活到下一代。
+     3.任何存活的单元格，如果存活的邻居多于三个，就会死亡，如同因资源过度而死亡。
+     4.任何死亡的单元格，如果恰好有三个存活的邻居，就会复活，如同繁殖一般。
+     */
+    private TETile NextGenerationHelper(TETile[][] tiles,int x,int y){
+        int CountCell = 0;
+        for(int i=-1;i<=1;i++){
+            for(int j=-1;j<=1;j++){
+                if(i==0 && j == 0) continue;
+
+                if(checkValid(x+i,y+j)){
+                    if(tiles[x+i][y+j] == Tileset.CELL) CountCell++;
+                }
+            }
+        }
+
+        TETile thisTile = tiles[x][y];
+        if(thisTile == Tileset.CELL){
+            if(CountCell<2) return Tileset.NOTHING;
+            else if(CountCell==2 || CountCell ==3) return Tileset.CELL;
+            else if(CountCell>3) return Tileset.NOTHING;
+            else return Tileset.NOTHING;
+        }else{
+            if(CountCell==3) return Tileset.CELL;
+            else return Tileset.NOTHING;
+        }
+    }
+
+    /**helper method
+     * to check whether a tile is on the edge or not
+     */
+    private boolean checkValid(int x,int y){
+        if(x<0 || x>=width || y<0 || y>=height) return false;
+        return true;
     }
 
     /**
@@ -269,17 +311,21 @@ public class GameOfLife {
         // TODO: Save the dimensions of the board into the first line of the file.
         // TODO: The width and height should be separated by a space, and end with "\n".
 
+        String toAdd = Integer.toString(width) + " " + Integer.toString(height) + '\n';
 
 
         // TODO: Save the current state of the board into save.txt. You should
         // TODO: use the provided FileUtils functions to help you. Make sure
         // TODO: the orientation is correct! Each line in the board should
         // TODO: end with a new line character.
-
-
-
-
-
+        for(int i=height-1;i>=0;i--){
+            for(int j=0;j<width;j++){
+                if(currentState[j][i]==Tileset.CELL) toAdd+="1";
+                else toAdd+="0";
+            }
+            toAdd+="\n";
+        }
+        FileUtils.writeFile(SAVE_FILE,toAdd);
     }
 
     /**
@@ -288,12 +334,22 @@ public class GameOfLife {
      */
     public TETile[][] loadBoard(String filename) {
         // TODO: Read in the file.
-
+        String data = FileUtils.readFile(filename);
         // TODO: Split the file based on the new line character.
-
+        String[] result = data.split("\n");
         // TODO: Grab and set the dimensions from the first line.
-
+        String[] dim = result[0].split(" ");
+        this.width = Integer.parseInt(dim[0]);
+        this.height = Integer.parseInt(dim[1]);
         // TODO: Create a TETile[][] to load the board from the file into
+        TETile[][] TempTiles = new TETile[width][height];
+        for(int i=1;i<result.length;i++){
+            for(int j=0;j<width;j++){
+                if(result[i].charAt(j)==1){
+                    TempTiles[j][i-1] = Tileset.CELL;
+                }else TempTiles[j][i-1] = Tileset.NOTHING;
+            }
+        }
         // TODO: and any additional variables that you think might help.
 
 
@@ -305,7 +361,7 @@ public class GameOfLife {
 
 
         // TODO: Return the board you loaded. Replace/delete this line.
-        return null;
+        return TempTiles;
     }
 
     /**
