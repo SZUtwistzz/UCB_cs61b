@@ -1,9 +1,6 @@
 package core;
 
-import tileengine.TETile;
-
 import java.awt.*;
-import java.util.List;
 import java.util.Random;
 
 public class Room {
@@ -18,7 +15,17 @@ public class Room {
         height = h;
         this.getCenter();
     }
-    public void getCenter(){
+    public Point getCenter(){
         center = new Point(width/2 + bottomLeft.x,height/2 +bottomLeft.y);
+        return center;
     }
+
+    public Point getPointFromRoom(Random rand){
+
+        return new Point((int) (bottomLeft.x+width*rand.nextDouble(1)), (int) (bottomLeft.y+height*rand.nextDouble(1)));
+    }
+
+    public int getWidth(){return width;};
+    public int getHeight(){return height;}
+    public Point getBottomLeft(){return bottomLeft;}
 }
